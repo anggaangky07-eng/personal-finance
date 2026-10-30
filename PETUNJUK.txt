@@ -1,0 +1,19 @@
+PERSONAL FINANCE PWA - OFFLINE READY
+
+Isi:
+- index.html: aplikasi catatan keuangan
+- manifest.webmanifest: identitas dan pengaturan instalasi
+- service-worker.js: menyimpan file aplikasi agar bisa dibuka offline
+- icons/: ikon aplikasi
+
+PENTING:
+PWA membutuhkan hosting HTTPS agar Service Worker dan instalasi browser bekerja. Setelah aplikasi dibuka online setidaknya sekali dan cache selesai, halaman aplikasi dapat dibuka offline. Transaksi disimpan di localStorage browser/perangkat. Jangan hapus data situs/browser; ekspor CSV secara berkala.
+
+Cara lanjut:
+1. Upload seluruh isi folder ini ke hosting HTTPS statis (misalnya GitHub Pages atau Netlify).
+2. Buka URL HTTPS tersebut di Chrome Android.
+3. Pilih menu Chrome > Tambahkan ke layar utama / Install app.
+4. Buka aplikasi sekali saat online, lalu uji mode pesawat.
+5. Untuk APK Android, masukkan URL PWA yang sudah online ke PWABuilder (https://www.pwabuilder.com/) dan ikuti proses Android package.
+
+Jangan hanya upload index.html. Semua file dan folder harus ikut diunggah dengan struktur yang sama.

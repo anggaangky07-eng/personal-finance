@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10131c">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>Personal Finance — Catatan Keuangan</title>
+<style>
+:root{color-scheme:dark;--bg:#0d1018;--panel:#171c28;--panel2:#202738;--line:#2b3447;--text:#edf1fa;--muted:#9ba7bc;--green:#53d6a0;--red:#ff7185;--blue:#8caeff;--accent:#9aabff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#182139 0,#0d1018 55%);color:var(--text);font:15px system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+main{max-width:980px;margin:auto;padding:24px 16px 48px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px}.brand{display:flex;align-items:center;gap:12px}.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#829bff,#6bdcb2);display:grid;place-items:center;color:#101725;font-size:22px;font-weight:900}.eyebrow{font-size:12px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}.top h1{font-size:22px;margin:2px 0}.tag{border:1px solid var(--line);border-radius:999px;padding:7px 11px;color:var(--muted);font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}.card,.panel{background:linear-gradient(145deg,#1a2030,#151a25);border:1px solid var(--line);border-radius:18px;padding:17px;box-shadow:0 12px 30px #0002}.card small{color:var(--muted)}.amount{font-size:clamp(20px,4vw,27px);font-weight:750;margin-top:8px;overflow-wrap:anywhere}.green{color:var(--green)}.red{color:var(--red)}.blue{color:var(--blue)}
+.layout{display:grid;grid-template-columns: minmax(280px,.85fr) minmax(0,1.4fr);gap:14px}.panel h2{font-size:17px;margin:0 0 15px}.field{margin-bottom:12px}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}input,select{width:100%;border:1px solid var(--line);background:#101522;color:var(--text);padding:12px;border-radius:11px;font:inherit;outline:none}input:focus,select:focus{border-color:var(--accent)}.types{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}.type{border:1px solid var(--line);border-radius:11px;padding:10px;background:#111725;color:var(--muted);cursor:pointer}.type.active.income{border-color:var(--green);color:var(--green);background:#173126}.type.active.expense{border-color:var(--red);color:var(--red);background:#351e29}
+button{font:inherit;cursor:pointer;border:0;border-radius:11px;padding:11px 14px;font-weight:650}.primary{width:100%;background:linear-gradient(100deg,#8caeff,#75dcb6);color:#111827}.secondary{background:#252f43;color:var(--text);border:1px solid var(--line)}.danger{background:#3a202a;color:#ff9aa8;border:1px solid #63313e}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.toolbar input,.toolbar select{flex:1;min-width:120px}.list{display:flex;flex-direction:column;gap:8px}.item{display:flex;align-items:center;gap:11px;padding:12px;border:1px solid var(--line);border-radius:13px;background:#121824}.symbol{width:38px;height:38px;border-radius:12px;background:#252e41;display:grid;place-items:center;font-size:18px}.detail{min-width:0;flex:1}.detail strong{display:block;overflow-wrap:anywhere}.detail small{color:var(--muted)}.right{text-align:right;white-space:nowrap}.right b{display:block}.right button{padding:5px 8px;margin-top:4px;font-size:11px}.empty{text-align:center;color:var(--muted);padding:30px 12px;border:1px dashed var(--line);border-radius:13px}.footer{color:var(--muted);font-size:12px;margin-top:16px;line-height:1.6}.monthline{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.monthline strong{font-size:14px}.hidden{display:none!important}
+@media(max-width:720px){.cards{grid-template-columns:1fr 1fr}.cards .card:last-child{grid-column:1/-1}.layout{grid-template-columns:1fr}.top h1{font-size:19px}.tag{display:none}}
+</style>
+</head>
+<body>
+<main>
+<header class="top"><div class="brand"><div class="logo">₿</div><div><div class="eyebrow">Personal finance</div><h1>Catatan Keuanganku</h1></div></div><div class="tag">🔒 Tersimpan di perangkat ini</div></header>
+<section class="cards">
+ <div class="card"><small>Total pemasukan</small><div class="amount green" id="incomeTotal">Rp0</div></div>
+ <div class="card"><small>Total pengeluaran</small><div class="amount red" id="expenseTotal">Rp0</div></div>
+ <div class="card"><small>Saldo saat ini</small><div class="amount blue" id="balanceTotal">Rp0</div></div>
+</section>
+<div class="layout">
+<section class="panel">
+<h2>＋ Tambah transaksi</h2>
+<div class="types"><button class="type active income" id="incomeBtn" type="button">＋ Pemasukan</button><button class="type expense" id="expenseBtn" type="button">－ Pengeluaran</button></div>
+<form id="transactionForm">
+ <div class="field"><label for="amount">Nominal (Rp)</label><input id="amount" type="number" min="1" step="1" placeholder="Contoh: 15000" required></div>
+ <div class="field"><label for="description">Keterangan</label><input id="description" maxlength="70" placeholder="Contoh: makan siang" required></div>
+ <div class="field"><label for="category">Kategori</label><select id="category"></select></div>
+ <div class="field"><label for="date">Tanggal</label><input id="date" type="date" required></div>
+ <button class="primary" type="submit">Simpan transaksi</button>
+</form>
+<p class="footer">Catatan: masukkan pemasukan awal sebagai transaksi pemasukan agar saldo awal ikut dihitung.</p>
+</section>
+<section class="panel">
+<div class="monthline"><h2 style="margin:0">Riwayat transaksi</h2><strong id="transactionCount">0 transaksi</strong></div>
+<div class="toolbar"><input id="search" placeholder="Cari keterangan..." aria-label="Cari transaksi"><select id="filterType" aria-label="Filter jenis"><option value="all">Semua jenis</option><option value="income">Pemasukan</option><option value="expense">Pengeluaran</option></select><input id="filterMonth" type="month" aria-label="Filter bulan"></div>
+<div class="toolbar"><button class="secondary" id="exportBtn" type="button">↓ Ekspor CSV</button><button class="secondary" id="clearFilter" type="button">Reset filter</button></div>
+<div id="transactionList" class="list"></div>
+<p class="footer">Data tersimpan otomatis di penyimpanan browser pada perangkat ini. Ekspor CSV secara berkala sebagai salinan cadangan.</p>
+</section>
+</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const categories={income:["Uang saku","Gaji/hasil kerja","Hadiah","Lainnya"],expense:["Makanan & minuman","Transportasi","Kuliah/sekolah","Pulsa & internet","Belanja","Hiburan","Kesehatan","Tagihan","Lainnya"]};
+let type="income";
+let transactions=[];
+try{transactions=JSON.parse(localStorage.getItem("personalFinanceTransactions")||"[]");if(!Array.isArray(transactions))transactions=[]}catch(e){transactions=[]}
+const rupiah=n=>new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(n);
+const safe=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function setType(t){type=t;$("incomeBtn").classList.toggle("active",t==="income");$("expenseBtn").classList.toggle("active",t==="expense");renderCategories()}
+function renderCategories(){ $("category").innerHTML=categories[type].map(c=>`<option>${safe(c)}</option>`).join("")}
+function persist(){localStorage.setItem("personalFinanceTransactions",JSON.stringify(transactions))}
+function render(){
+ const income=transactions.filter(t=>t.type==="income").reduce((s,t)=>s+t.amount,0);
+ const expense=transactions.filter(t=>t.type==="expense").reduce((s,t)=>s+t.amount,0);
+ $("incomeTotal").textContent=rupiah(income);$("expenseTotal").textContent=rupiah(expense);$("balanceTotal").textContent=rupiah(income-expense);
+ const q=$("search").value.toLowerCase(), f=$("filterType").value,m=$("filterMonth").value;
+ const shown=transactions.filter(t=>(f==="all"||t.type===f)&&(!m||t.date.startsWith(m))&&(`${t.description} ${t.category}`.toLowerCase().includes(q))).sort((a,b)=>b.date.localeCompare(a.date)||b.createdAt-a.createdAt);
+ $("transactionCount").textContent=`${shown.length} transaksi`;
+ $("transactionList").innerHTML=shown.length?shown.map(t=>`<div class="item"><div class="symbol">${t.type==="income"?"↙":"↗"}</div><div class="detail"><strong>${safe(t.description)}</strong><small>${safe(t.category)} · ${new Date(t.date+"T00:00:00").toLocaleDateString("id-ID",{day:"numeric",month:"short",year:"numeric"})}</small></div><div class="right"><b class="${t.type==="income"?"green":"red"}">${t.type==="income"?"+":"−"}${rupiah(t.amount)}</b><button class="danger" type="button" data-delete="${safe(t.id)}">Hapus</button></div></div>`).join(""):'<div class="empty">Belum ada transaksi yang cocok.<br>Tambahkan transaksi pertamamu di sebelah kiri.</div>';
+}
+$("incomeBtn").onclick=()=>setType("income");$("expenseBtn").onclick=()=>setType("expense");
+$("date").value=new Date().toLocaleDateString("en-CA");
+$("transactionForm").addEventListener("submit",e=>{e.preventDefault();const amount=Number($("amount").value);if(!Number.isSafeInteger(amount)||amount<=0){alert("Masukkan nominal rupiah yang valid.");return}
+transactions.push({id:String(Date.now())+Math.random().toString(16).slice(2),type,amount,description:$("description").value.trim(),category:$("category").value,date:$("date").value,createdAt:Date.now()});persist();e.target.reset();$("date").value=new Date().toLocaleDateString("en-CA");render();});
+["search","filterType","filterMonth"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",render));
+$("transactionList").addEventListener("click",e=>{const b=e.target.closest("[data-delete]");if(!b)return;if(confirm("Hapus transaksi ini?")){transactions=transactions.filter(t=>t.id!==b.dataset.delete);persist();render()}});
+$("clearFilter").onclick=()=>{$("search").value="";$("filterType").value="all";$("filterMonth").value="";render()};
+$("exportBtn").onclick=()=>{const rows=[["Tanggal","Jenis","Keterangan","Kategori","Nominal"],...transactions.map(t=>[t.date,t.type==="income"?"Pemasukan":"Pengeluaran",t.description,t.category,t.amount])];const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="catatan-keuangan.csv";a.click();URL.revokeObjectURL(url)};
+renderCategories();render();
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js").catch(err => console.warn("Service worker:", err));
+  });
+}
+</script>
+</body></html>
